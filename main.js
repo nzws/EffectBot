@@ -88,7 +88,7 @@ function StartAkariBot(mode) {
                     if (acct !== config.bot_id) {
                         //メイン部分
                         if (text.match(/(!effect)/i)) {
-                            //rt(json['id']);
+                            rt(json['id']);
                             var imagetype = ".png";
                             if (json['mentions'][0]) {
                                 if (json['mentions'][1] && json['mentions'][0]["username"] !== "EffectBot") {
