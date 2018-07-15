@@ -379,7 +379,7 @@ function rt(id) {
 }
 
 function post_upimg(value, option = {}, visibility = config.post_privacy, force, imageurl) {
-    if (is_running || force) {
+    if (force) {
         request.post({
             url: "https://" + config.domain + "/api/v1/media",
             headers: {
@@ -420,7 +420,7 @@ function post(value, option = {}, visibility = config.post_privacy, force) {
     if (option.media_ids) {
         optiondata.media_ids = option.media_ids;
     }
-    if (is_running || force) {
+    if (force) {
         fetch("https://" + config.domain + "/api/v1/statuses", {
             headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + config.token },
             method: 'POST',
