@@ -118,6 +118,7 @@ function StartAkariBot(mode) {
                             } else if (json['mentions'][0]) {
                                 if (json['mentions'][2]) {
                                     post("@" + acct + " " + lang["en"].lang[0], { in_reply_to_id: json['id'] }, "direct");
+                                    return;
                                 }
                                 if (json['mentions'][1]) {
                                     var i = 0;
