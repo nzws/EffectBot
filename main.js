@@ -13,6 +13,10 @@ const { createCanvas, loadImage } = require('canvas');
 const request = require('request');
 const fs = require('fs');
 
+let lang = {};
+lang["ja"] = require('./data/talk_sys/ja');
+lang["en"] = require('./data/talk_sys/en');
+
 var effect = require('effect');
 var { JSDOM } = require('jsdom');
 
@@ -166,7 +170,7 @@ function StartAkariBot(mode) {
                                 }
 
                                 //メイン部分
-                                if (text.match(/(a!|あかり)/i)) {
+                                if (text.match(/(!a|あかり|!akari)/i)) {
                                     is_talking = false;
                                     rt(json['id']);
 
@@ -260,11 +264,11 @@ function StartAkariBot(mode) {
                                         is_talking = true;
                                     }
 
-                                    if (text.match(/(画像|エフェクト)/i)) {
+                                    if (text.match(/(画像|エフェクト|effect|)/i)) {
                                         var imagetype = ".png";
                                         if (json['mentions'][0]) {
                                             if (json['mentions'][1]) {
-                                                post("@" + acct + " 一度に出来る人は1人までだよ！", { in_reply_to_id: json['id'] }, "direct");
+                                                post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[0], { in_reply_to_id: json['id'] }, "direct");
                                             } else {
                                                 fetch("https://" + config.domain + "/api/v1/accounts/" + json['mentions'][0]["id"], {
                                                     headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + config.token },
@@ -303,7 +307,7 @@ function StartAkariBot(mode) {
                                             }
                                         } else if (json['media_attachments'][0]) {
                                             if (json['media_attachments'][1]) {
-                                                post("@" + acct + " 一度に処理できる画像は1つまでだよ！", { in_reply_to_id: json['id'] }, "direct");
+                                                post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[1], { in_reply_to_id: json['id'] }, "direct");
                                             } else {
                                                 if (json['media_attachments'][0]["type"] === "image") {
                                                     request({
@@ -323,11 +327,11 @@ function StartAkariBot(mode) {
                                                         }
                                                     );
                                                 } else {
-                                                    post("@" + acct + " 画像以外は使えないから画像でお願い...", { in_reply_to_id: json['id'] }, "direct");
+                                                    post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[2], { in_reply_to_id: json['id'] }, "direct");
                                                 }
                                             }
                                         } else {
-                                            post("@" + acct + " 画像エフェクトを使用するには、画像をアップロードするか使用したいアイコンのIDを記入する必要があるよ！\n画像エフェクトのドキュメント: 準備中", { in_reply_to_id: json['id'] }, "direct");
+                                            post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[3], { in_reply_to_id: json['id'] }, "direct");
                                         }
                                         is_talking = true;
                                     }
@@ -464,7 +468,7 @@ function image_effect(imagetype, json, addtext = "") {
             mode["base"] = "funia";
             mode["type"] = 19;
         } else {
-            post("@" + acct + " 画像エフェクトを使用するには、エフェクトモードを指定する必要があるよ！\n画像エフェクトのドキュメント: 準備中", { in_reply_to_id: json['id'] }, "direct");
+            post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[4], { in_reply_to_id: json['id'] }, "direct");
             return false;
         }
         var canvas_origin = createCanvas(image.width, image.height)
@@ -484,7 +488,7 @@ function image_effect(imagetype, json, addtext = "") {
 
             var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
             fs.writeFileSync('data/tmp/effect_result' + imagetype, blobdata, 'binary');
-            post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " をエフェクトしたよ！", {}, config.post_privacy, false, 'data/tmp/effect_result' + imagetype);
+            post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[5], {}, config.post_privacy, false, 'data/tmp/effect_result' + imagetype);
         } else if (mode["base"] === "effect") {
             var options = {
                 image: 'data/tmp/effect_user' + imagetype,
@@ -495,7 +499,7 @@ function image_effect(imagetype, json, addtext = "") {
             var callback = function (error) {
                 if (!error) {
                     console.log("The effect was applied to your image !");
-                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " をエフェクトしたよ！", {}, config.post_privacy, false, 'data/tmp/effect_result' + imagetype);
+                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[5], {}, config.post_privacy, false, 'data/tmp/effect_result' + imagetype);
                 }
             }
             //https://www.npmjs.com/package/effect
@@ -550,7 +554,7 @@ function image_effect(imagetype, json, addtext = "") {
                                 if (!error && response.statusCode === 200) {
                                     filet = urld.match(/\.(jpg|png|gif)/i)[0];
                                     fs.writeFileSync('data/tmp/effect_result' + filet, blob, 'binary');
-                                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " をエフェクトしたよ！", {}, config.post_privacy, false, 'data/tmp/effect_result' + filet);
+                                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[5], {}, config.post_privacy, false, 'data/tmp/effect_result' + filet);
                                 }
                             }
                         );
