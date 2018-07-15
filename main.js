@@ -293,7 +293,7 @@ function StartAkariBot(mode) {
                                                                         console.log("OK:IMAGEGET_EFFECT:" + acct);
                                                                         imagetype = jsoni["avatar_static"].match(/\.(jpeg|jpg|png|gif)/i)[0];
                                                                         fs.writeFileSync('data/tmp/effect_user' + json["id"] + imagetype, blob, 'binary');
-                                                                        image_effect(imagetype, json, (" @" + jsoni["acct"] + " で "));
+                                                                        image_effect(imagetype, json, ("( @" + jsoni["acct"] + " )"));
                                                                     } else {
                                                                         console.warn("NG:IMAGEGET_EFFECT");
                                                                     }
