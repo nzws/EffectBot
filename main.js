@@ -87,7 +87,32 @@ function StartAkariBot(mode) {
                     let text = json['content'];
                     if (acct !== config.bot_id) {
                         //メイン部分
-                        if (text.match(/(!effect)/i)) {
+                        if (json['media_attachments'][0]) {
+                            if (json['media_attachments'][1]) {
+                                post("@" + acct + " " + lang["en"].lang[1], { in_reply_to_id: json['id'] }, "direct");
+                            } else {
+                                if (json['media_attachments'][0]["type"] === "image") {
+                                    request({
+                                        method: 'GET',
+                                        url: json['media_attachments'][0]["preview_url"],
+                                        encoding: null
+                                    },
+                                        function (error, response, blob) {
+                                            if (!error && response.statusCode === 200) {
+                                                console.log("OK:IMAGEGET_EFFECT:MEDIA");
+                                                imagetype = json['media_attachments'][0]["preview_url"].match(/\.(jpeg|jpg|png|gif)/i)[0];
+                                                fs.writeFileSync('data/tmp/effect_user' + json["id"] + imagetype, blob, 'binary');
+                                                image_effect(imagetype, json);
+                                            } else {
+                                                console.warn("NG:IMAGEGET_EFFECT");
+                                            }
+                                        }
+                                    );
+                                } else {
+                                    post("@" + acct + " " + lang["en"].lang[2], { in_reply_to_id: json['id'] }, "direct");
+                                }
+                            }
+                        } else if (text.match(/(!effect)/i)) {
                             rt(json['id']);
                             var imagetype = ".png";
                             if (json['mentions'][0]) {
@@ -131,31 +156,6 @@ function StartAkariBot(mode) {
                                             }
                                         }
                                     });
-                                }
-                            } else if (json['media_attachments'][0]) {
-                                if (json['media_attachments'][1]) {
-                                    post("@" + acct + " " + lang["en"].lang[1], { in_reply_to_id: json['id'] }, "direct");
-                                } else {
-                                    if (json['media_attachments'][0]["type"] === "image") {
-                                        request({
-                                            method: 'GET',
-                                            url: json['media_attachments'][0]["preview_url"],
-                                            encoding: null
-                                        },
-                                            function (error, response, blob) {
-                                                if (!error && response.statusCode === 200) {
-                                                    console.log("OK:IMAGEGET_EFFECT:MEDIA");
-                                                    imagetype = json['media_attachments'][0]["preview_url"].match(/\.(jpeg|jpg|png|gif)/i)[0];
-                                                    fs.writeFileSync('data/tmp/effect_user' + json["id"] + imagetype, blob, 'binary');
-                                                    image_effect(imagetype, json);
-                                                } else {
-                                                    console.warn("NG:IMAGEGET_EFFECT");
-                                                }
-                                            }
-                                        );
-                                    } else {
-                                        post("@" + acct + " " + lang["en"].lang[2], { in_reply_to_id: json['id'] }, "direct");
-                                    }
                                 }
                             } else {
                                 post("@" + acct + " " + lang["en"].lang[3], { in_reply_to_id: json['id'] }, "direct");
