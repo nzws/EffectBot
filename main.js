@@ -261,6 +261,7 @@ function image_effect(imagetype, json, addtext = "") {
             post("@" + acct + " " + lang["en"].lang[4], { in_reply_to_id: json['id'] }, "direct");
             return false;
         }
+        console.log(mode["base"] + ":" + mode["type"]);
         var canvas_origin = createCanvas(image.width, image.height)
         var ctx = canvas_origin.getContext('2d');
 
