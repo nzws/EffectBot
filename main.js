@@ -268,7 +268,7 @@ function StartAkariBot(mode) {
                                         var imagetype = ".png";
                                         if (json['mentions'][0]) {
                                             if (json['mentions'][1]) {
-                                                post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[0], { in_reply_to_id: json['id'] }, "direct");
+                                                post("@" + acct + " " + lang[json["language"] === "ja" ? "ja" : "en"].lang[0], { in_reply_to_id: json['id'] }, "direct");
                                             } else {
                                                 fetch("https://" + config.domain + "/api/v1/accounts/" + json['mentions'][0]["id"], {
                                                     headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + config.token },
@@ -307,7 +307,7 @@ function StartAkariBot(mode) {
                                             }
                                         } else if (json['media_attachments'][0]) {
                                             if (json['media_attachments'][1]) {
-                                                post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[1], { in_reply_to_id: json['id'] }, "direct");
+                                                post("@" + acct + " " + lang[json["language"] === "ja" ? "ja" : "en"].lang[1], { in_reply_to_id: json['id'] }, "direct");
                                             } else {
                                                 if (json['media_attachments'][0]["type"] === "image") {
                                                     request({
@@ -327,11 +327,11 @@ function StartAkariBot(mode) {
                                                         }
                                                     );
                                                 } else {
-                                                    post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[2], { in_reply_to_id: json['id'] }, "direct");
+                                                    post("@" + acct + " " + lang[json["language"] === "ja" ? "ja" : "en"].lang[2], { in_reply_to_id: json['id'] }, "direct");
                                                 }
                                             }
                                         } else {
-                                            post("@" + acct + " " + lang[json["language"] === "en" ? "en" : "ja"].lang[3], { in_reply_to_id: json['id'] }, "direct");
+                                            post("@" + acct + " " + lang[json["language"] === "ja" ? "ja" : "en"].lang[3], { in_reply_to_id: json['id'] }, "direct");
                                         }
                                         is_talking = true;
                                     }
