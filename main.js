@@ -173,6 +173,7 @@ function StartAkariBot(mode) {
     client.connect("wss://" + config.domain + "/api/v1/streaming/?access_token=" + config.token + "&stream=" + mode);
 }
 
+Start();
 
 // ここからいろいろ
 
