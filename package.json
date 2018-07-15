@@ -1,14 +1,13 @@
 {
-  "name": "akaribot",
+  "name": "effectbot",
   "version": "1.0.0",
-  "description": "AkariBot is kawaii Bot!!!",
+  "description": "effectbot",
   "main": "main.js",
   "dependencies": {
     "canvas": "^2.0.0-alpha.12",
     "effect": "^1.0.4",
     "fs": "0.0.1-security",
     "jsdom": "^11.11.0",
-    "mysql": "^2.15.0",
     "node-fetch": "^1.7.3",
     "npm": "^5.6.0",
     "request": "^2.87.0",
@@ -20,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yuzulabo/AkariBot.git"
+    "url": "git+https://github.com/yuzulabo/EffectBot.git"
   },
   "keywords": [
     "Mastodon-Bot"
@@ -28,7 +27,7 @@
   "author": "neziri_wasabi (yuzulabo)",
   "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/yuzulabo/AkariBot/issues"
+    "url": "https://github.com/yuzulabo/EffectBot/issues"
   },
-  "homepage": "https://github.com/yuzulabo/AkariBot#readme"
+  "homepage": "https://github.com/yuzulabo/EffectBot#readme"
 }
