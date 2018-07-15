@@ -116,47 +116,53 @@ function StartAkariBot(mode) {
                                     }
                                 }
                             } else if (json['mentions'][0]) {
-                                if (json['mentions'][1] && json['mentions'][0]["username"] !== "EffectBot") {
+                                if (json['mentions'][2]) {
                                     post("@" + acct + " " + lang["en"].lang[0], { in_reply_to_id: json['id'] }, "direct");
-                                } else {
-                                    if (json['mentions'][0]["username"] === "EffectBot" && json['mentions'][1]) {
-                                        json['mentions'][0] = json['mentions'][1];
-                                    }
-                                    fetch("https://" + config.domain + "/api/v1/accounts/" + json['mentions'][0]["id"], {
-                                        headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + config.token },
-                                        method: 'GET'
-                                    }).then(function (response) {
-                                        if (response.ok) {
-                                            return response.json();
-                                        } else {
-                                            console.warn("NG:USERGET_EFFECT:SERVER");
-                                            return null;
-                                        }
-                                    }).then(function (jsoni) {
-                                        if (jsoni) {
-                                            if (jsoni["id"]) {
-                                                request({
-                                                    method: 'GET',
-                                                    url: jsoni["avatar_static"],
-                                                    encoding: null
-                                                },
-                                                    function (error, response, blob) {
-                                                        if (!error && response.statusCode === 200) {
-                                                            console.log("OK:IMAGEGET_EFFECT:" + acct);
-                                                            imagetype = jsoni["avatar_static"].match(/\.(jpeg|jpg|png|gif)/i)[0];
-                                                            fs.writeFileSync('data/tmp/effect_user' + json["id"] + imagetype, blob, 'binary');
-                                                            image_effect(imagetype, json, (", @" + jsoni["acct"]));
-                                                        } else {
-                                                            console.warn("NG:IMAGEGET_EFFECT");
-                                                        }
-                                                    }
-                                                );
-                                            } else {
-                                                console.warn("NG:USERGET_EFFECT:" + jsoni);
-                                            }
-                                        }
-                                    });
                                 }
+                                if (json['mentions'][1]) {
+                                    var i = 0;
+                                    while (json['mentions'][i]) {
+                                        if (json['mentions'][i]["acct"] !== config.bot_id) {
+                                            json['mentions'][0] = json['mentions'][i];
+                                            break;
+                                        }
+                                        i++;
+                                    }
+                                }
+                                fetch("https://" + config.domain + "/api/v1/accounts/" + json['mentions'][0]["id"], {
+                                    headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + config.token },
+                                    method: 'GET'
+                                }).then(function (response) {
+                                    if (response.ok) {
+                                        return response.json();
+                                    } else {
+                                        console.warn("NG:USERGET_EFFECT:SERVER");
+                                        return null;
+                                    }
+                                }).then(function (jsoni) {
+                                    if (jsoni) {
+                                        if (jsoni["id"]) {
+                                            request({
+                                                method: 'GET',
+                                                url: jsoni["avatar_static"],
+                                                encoding: null
+                                            },
+                                                function (error, response, blob) {
+                                                    if (!error && response.statusCode === 200) {
+                                                        console.log("OK:IMAGEGET_EFFECT:" + acct);
+                                                        imagetype = jsoni["avatar_static"].match(/\.(jpeg|jpg|png|gif)/i)[0];
+                                                        fs.writeFileSync('data/tmp/effect_user' + json["id"] + imagetype, blob, 'binary');
+                                                        image_effect(imagetype, json, (", @" + jsoni["acct"]));
+                                                    } else {
+                                                        console.warn("NG:IMAGEGET_EFFECT");
+                                                    }
+                                                }
+                                            );
+                                        } else {
+                                            console.warn("NG:USERGET_EFFECT:" + jsoni);
+                                        }
+                                    }
+                                });
                             } else {
                                 post("@" + acct + " " + lang["en"].lang[3], { in_reply_to_id: json['id'] }, "direct");
                             }
