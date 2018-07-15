@@ -261,7 +261,6 @@ function image_effect(imagetype, json, addtext = "") {
             post("@" + acct + " " + lang["en"].lang[4], { in_reply_to_id: json['id'] }, "direct");
             return false;
         }
-        console.log(mode["base"] + ":" + mode["type"]);
         var canvas_origin = createCanvas(image.width, image.height)
         var ctx = canvas_origin.getContext('2d');
 
@@ -380,30 +379,28 @@ function rt(id) {
 }
 
 function post_upimg(value, option = {}, visibility = config.post_privacy, force, imageurl) {
-    if (force) {
-        request.post({
-            url: "https://" + config.domain + "/api/v1/media",
-            headers: {
-                'Authorization': 'Bearer ' + config.token
-            },
-            formData: {
-                'file': fs.createReadStream(imageurl)
-            }
-        }, function (error, response, json) {
-            if (!error && response.statusCode == 200) {
-                json = JSON.parse(json);
-                if (json["id"] && json["type"] !== "unknown") {
-                    console.log("OK:POST_IMG", json);
-                    option["media_ids"] = [json["id"]];
-                    post(value, option, visibility, force);
-                } else {
-                    console.warn("NG:POST_IMG:", json);
-                }
+    request.post({
+        url: "https://" + config.domain + "/api/v1/media",
+        headers: {
+            'Authorization': 'Bearer ' + config.token
+        },
+        formData: {
+            'file': fs.createReadStream(imageurl)
+        }
+    }, function (error, response, json) {
+        if (!error && response.statusCode == 200) {
+            json = JSON.parse(json);
+            if (json["id"] && json["type"] !== "unknown") {
+                console.log("OK:POST_IMG", json);
+                option["media_ids"] = [json["id"]];
+                post(value, option, visibility, force);
             } else {
-                console.warn("NG:POST_IMG:SERVER:", error);
-            };
-        });
-    }
+                console.warn("NG:POST_IMG:", json);
+            }
+        } else {
+            console.warn("NG:POST_IMG:SERVER:", error);
+        };
+    });
 }
 
 function post(value, option = {}, visibility = config.post_privacy, force) {
@@ -421,28 +418,26 @@ function post(value, option = {}, visibility = config.post_privacy, force) {
     if (option.media_ids) {
         optiondata.media_ids = option.media_ids;
     }
-    if (force) {
-        fetch("https://" + config.domain + "/api/v1/statuses", {
-            headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + config.token },
-            method: 'POST',
-            body: JSON.stringify(optiondata)
-        }).then(function (response) {
-            if (response.ok) {
-                return response.json();
+    fetch("https://" + config.domain + "/api/v1/statuses", {
+        headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + config.token },
+        method: 'POST',
+        body: JSON.stringify(optiondata)
+    }).then(function (response) {
+        if (response.ok) {
+            return response.json();
+        } else {
+            console.warn("NG:POST:SERVER");
+            return null;
+        }
+    }).then(function (json) {
+        if (json) {
+            if (json["id"]) {
+                console.log("OK:POST");
             } else {
-                console.warn("NG:POST:SERVER");
-                return null;
+                console.warn("NG:POST:" + json);
             }
-        }).then(function (json) {
-            if (json) {
-                if (json["id"]) {
-                    console.log("OK:POST");
-                } else {
-                    console.warn("NG:POST:" + json);
-                }
-            }
-        });
-    }
+        }
+    });
 }
 
 function follow(id) {
