@@ -1,8 +1,8 @@
 exports.lang = [
-    '一度に出来る人は1人までだよ！',
-    '一度に処理できる画像は1つまでだよ！',
-    '画像以外は使えないから画像でお願い...',
-    '画像エフェクトを使用するには、画像をアップロードするか使用したいアイコンのIDを記入する必要があるよ！\n画像エフェクトのドキュメント: 準備中',
-    '画像エフェクトを使用するには、エフェクトモードを指定する必要があるよ！\n画像エフェクトのドキュメント: 準備中',
-    'をエフェクトしたよ！'
+    'Only one user\'s request can be processed at one time!',
+    'Only one image can be processed at one time!',
+    'Please use the image, I can\'t process except image...',
+    'To use the image effect, you need to send an image or the user ID of the icon what you want to use! \n Image effect documentation: Coming soon.',
+    'To use image effects, you need to specify the effect mode! \n Image effect documentation: Coming soon.',
+    'effect was processed!'
 ];
