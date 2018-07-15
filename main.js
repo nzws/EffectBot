@@ -94,7 +94,7 @@ function StartAkariBot(mode) {
                                 if (json['mentions'][1] && json['mentions'][0]["username"] !== "EffectBot") {
                                     post("@" + acct + " " + lang["en"].lang[0], { in_reply_to_id: json['id'] }, "direct");
                                 } else {
-                                    if (json['mentions'][0]["username"] === "EffectBot") {
+                                    if (json['mentions'][0]["username"] === "EffectBot" && json['mentions'][1]) {
                                         json['mentions'][0] = json['mentions'][1];
                                     }
                                     fetch("https://" + config.domain + "/api/v1/accounts/" + json['mentions'][0]["id"], {
