@@ -72,7 +72,7 @@ function StartAkariBot(mode) {
                         }
                         if (json["type"] !== "mention") {
                             return;
-                        } else {
+                        } else { //type: mention
                             json = json["status"];
                         }
                     }
@@ -264,6 +264,12 @@ function image_effect(imagetype, json, addtext = "") {
         } else if (json['content'].match(/(雷|lightning)/i)) {
             mode["base"] = "funia";
             mode["type"] = 19;
+        } else if (json['content'].match(/(rip)/i)) {
+            mode["base"] = "rip";
+            if (!addtext) {
+                post("@" + acct + " " + lang["en"].lang[6], { in_reply_to_id: json['id'] }, "direct");
+                return false;
+            }
         } else {
             post("@" + acct + " " + lang["en"].lang[4], { in_reply_to_id: json['id'] }, "direct");
             return false;
@@ -355,6 +361,19 @@ function image_effect(imagetype, json, addtext = "") {
                                 }
                             }
                         );
+                    }
+                }
+            );
+        } else if (mode["base"] === "rip") {
+            request({
+                method: 'get',
+                url: "http://www.tombstonebuilder.com/generate.php?top1=R.I.P&top2=&top3=" + json['mentions'][0]["username"] + "'s&top4=HOPES+AND+DREAMS&sp=",
+                encoding: null
+            },
+                function (error, response, blob) {
+                    if (!error && response.statusCode === 200) {
+                        fs.writeFileSync('data/tmp/effect_result' + json["id"] + ".jpg", blob, 'binary');
+                        post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + json['mentions'][0]["username"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + ".jpg");
                     }
                 }
             );
