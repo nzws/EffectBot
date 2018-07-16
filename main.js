@@ -305,7 +305,7 @@ function image_effect(imagetype, json, addtext = "") {
 
                     while (true) {
                         if (w * 1.3 < image.width && h * 1.3 < image.height) {
-                            console.log (w, h)
+                            console.log(w, h)
                             break;
                         }
                         w = w - 50;
@@ -315,8 +315,8 @@ function image_effect(imagetype, json, addtext = "") {
                     ctx.drawImage(image2, 0, 0, image2.height, image2.height, image.width - w, image.height - h, w, h);
 
                     var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
-                fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
-                post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+                    fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
+                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
                 });
             } else if (mode["type"] === "wasted") {
                 //ctx.antialias = 'gray';
@@ -325,10 +325,10 @@ function image_effect(imagetype, json, addtext = "") {
                 // https://qiita.com/sassy_watson/items/676af253d8425ce0f8fc
                 var src = ctx.getImageData(0, 0, image.width, image.height);
                 var dst = ctx.createImageData(image.width, image.height);
-                for (var i = 0; i < src.data.length; i=i+4) {
-                    var pixel = (src.data[i] + src.data[i+1] + src.data[i+2]) / 3;
-                    dst.data[i] = dst.data[i+1] = dst.data[i+2] = pixel;
-                    dst.data[i+3] = src.data[i+3];
+                for (var i = 0; i < src.data.length; i = i + 4) {
+                    var pixel = (src.data[i] + src.data[i + 1] + src.data[i + 2]) / 3;
+                    dst.data[i] = dst.data[i + 1] = dst.data[i + 2] = pixel;
+                    dst.data[i + 3] = src.data[i + 3];
                 }
                 ctx.putImageData(dst, 0, 0);
 
@@ -336,12 +336,12 @@ function image_effect(imagetype, json, addtext = "") {
                     ctx.drawImage(image2, 0, 0, image.height, image.height);
 
                     var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
-                fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
-                post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+                    fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
+                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
                 });
             }
 
-            if (mode["type"] !== "intervention" && mode["type"] !== "wasted") {
+            if (mode["type"] !== "kill" && mode["type"] !== "wasted") {
                 var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
                 fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
                 post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
