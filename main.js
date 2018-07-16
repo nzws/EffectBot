@@ -284,6 +284,8 @@ function image_effect(imagetype, json, addtext = "") {
             post("@" + json["account"]["acct"] + " " + lang["en"].lang[4], { in_reply_to_id: json['id'] }, "direct");
             return false;
         }
+        var nsfw = json["sensitive"] && !addtext;
+
         var canvas_origin = createCanvas(image.width, image.height)
         var ctx = canvas_origin.getContext('2d');
 
@@ -316,7 +318,7 @@ function image_effect(imagetype, json, addtext = "") {
 
                     var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
                     fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
-                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'], sensitive: nsfw }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
                 });
             } else if (mode["type"] === "wasted") {
                 //ctx.antialias = 'gray';
@@ -337,14 +339,14 @@ function image_effect(imagetype, json, addtext = "") {
 
                     var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
                     fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
-                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'], sensitive: nsfw }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
                 });
             }
 
             if (mode["type"] !== "kill" && mode["type"] !== "wasted") {
                 var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
                 fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
-                post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+                post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'], sensitive: nsfw }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
             }
         } else if (mode["base"] === "effect") {
             var options = {
@@ -356,7 +358,7 @@ function image_effect(imagetype, json, addtext = "") {
             var callback = function (error) {
                 if (!error) {
                     console.log("The effect was applied to your image !");
-                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'], sensitive: nsfw }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
                 }
             }
             //https://www.npmjs.com/package/effect
@@ -411,7 +413,7 @@ function image_effect(imagetype, json, addtext = "") {
                                 if (!error && response.statusCode === 200) {
                                     filet = urld.match(/\.(jpg|png|gif)/i)[0];
                                     fs.writeFileSync('data/tmp/effect_result' + json["id"] + filet, blob, 'binary');
-                                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + filet);
+                                    post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'], sensitive: nsfw }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + filet);
                                 }
                             }
                         );
@@ -427,7 +429,7 @@ function image_effect(imagetype, json, addtext = "") {
                 function (error, response, blob) {
                     if (!error && response.statusCode === 200) {
                         fs.writeFileSync('data/tmp/effect_result' + json["id"] + ".jpg", blob, 'binary');
-                        post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + json['mentions'][0]["username"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + ".jpg");
+                        post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + json['mentions'][0]["username"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'], sensitive: nsfw }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + ".jpg");
                     }
                 }
             );
@@ -497,6 +499,9 @@ function post(value, option = {}, visibility = config.post_privacy, force) {
     }
     if (option.media_ids) {
         optiondata.media_ids = option.media_ids;
+    }
+    if (option.sensitive) {
+        optiondata.sensitive = option.sensitive;
     }
     fetch("https://" + config.domain + "/api/v1/statuses", {
         headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + config.token },
