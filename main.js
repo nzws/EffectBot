@@ -267,11 +267,14 @@ function image_effect(imagetype, json, addtext = "") {
         } else if (json['content'].match(/(rip)/i)) {
             mode["base"] = "rip";
             if (!addtext) {
-                post("@" + acct + " " + lang["en"].lang[6], { in_reply_to_id: json['id'] }, "direct");
+                post("@" + json["account"]["acct"] + " " + lang["en"].lang[6], { in_reply_to_id: json['id'] }, "direct");
                 return false;
             }
+        } else if (json['content'].match(/(kill)/i)) {
+            mode["base"] = "vanila";
+            mode["type"] = "kill";
         } else {
-            post("@" + acct + " " + lang["en"].lang[4], { in_reply_to_id: json['id'] }, "direct");
+            post("@" + json["account"]["acct"] + " " + lang["en"].lang[4], { in_reply_to_id: json['id'] }, "direct");
             return false;
         }
         var canvas_origin = createCanvas(image.width, image.height)
@@ -287,11 +290,34 @@ function image_effect(imagetype, json, addtext = "") {
                 ctx.drawImage(image, -image.width, 0);
                 ctx.scale(-1, 1);
                 ctx.drawImage(image, 0, 0, image.width / 2, image.height, 0, 0, image.width / 2, image.height);
+            } else if (mode["type"] === "kill") {
+                ctx.drawImage(image, 0, 0);
+                loadImage('data/images/Intervention.png').then((image2) => {
+                    var w = image2.width;
+                    var h = image2.height;
+
+                    while (true) {
+                        if (w * 1.3 < image.width && h * 1.3 < image.height) {
+                            console.log (w, h)
+                            break;
+                        }
+                        w = w - 50;
+                        h = h - 50;
+                    }
+
+                    ctx.drawImage(image2, 0, 0, image2.height, image2.height, image.width - w, image.height - h, w, h);
+
+                    var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
+                fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
+                post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+                });
             }
 
-            var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
-            fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
-            post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+            if (mode["type"] !== "intervention") {
+                var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
+                fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
+                post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+            }
         } else if (mode["base"] === "effect") {
             var options = {
                 image: 'data/tmp/effect_user' + json["id"] + imagetype,
