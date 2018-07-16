@@ -273,6 +273,13 @@ function image_effect(imagetype, json, addtext = "") {
         } else if (json['content'].match(/(kill)/i)) {
             mode["base"] = "vanila";
             mode["type"] = "kill";
+        } else if (json['content'].match(/(wasted)/i)) {
+            mode["base"] = "vanila";
+            mode["type"] = "wasted";
+            if (!addtext) {
+                post("@" + json["account"]["acct"] + " " + lang["en"].lang[6], { in_reply_to_id: json['id'] }, "direct");
+                return false;
+            }
         } else {
             post("@" + json["account"]["acct"] + " " + lang["en"].lang[4], { in_reply_to_id: json['id'] }, "direct");
             return false;
@@ -311,9 +318,30 @@ function image_effect(imagetype, json, addtext = "") {
                 fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
                 post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
                 });
+            } else if (mode["type"] === "wasted") {
+                //ctx.antialias = 'gray';
+                ctx.drawImage(image, 0, 0);
+
+                // https://qiita.com/sassy_watson/items/676af253d8425ce0f8fc
+                var src = ctx.getImageData(0, 0, image.width, image.height);
+                var dst = ctx.createImageData(image.width, image.height);
+                for (var i = 0; i < src.data.length; i=i+4) {
+                    var pixel = (src.data[i] + src.data[i+1] + src.data[i+2]) / 3;
+                    dst.data[i] = dst.data[i+1] = dst.data[i+2] = pixel;
+                    dst.data[i+3] = src.data[i+3];
+                }
+                ctx.putImageData(dst, 0, 0);
+
+                loadImage('data/images/wasted.png').then((image2) => {
+                    ctx.drawImage(image2, 0, 0, image.height, image.height);
+
+                    var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
+                fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
+                post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
+                });
             }
 
-            if (mode["type"] !== "intervention") {
+            if (mode["type"] !== "intervention" && mode["type"] !== "wasted") {
                 var blobdata = new Buffer((canvas_origin.toDataURL()).split(",")[1], 'base64');
                 fs.writeFileSync('data/tmp/effect_result' + json["id"] + imagetype, blobdata, 'binary');
                 post_upimg("@" + json["account"]["acct"] + addtext + " " + mode["base"] + ":" + mode["type"] + " " + lang["en"].lang[5], { in_reply_to_id: json['id'] }, config.post_privacy, false, 'data/tmp/effect_result' + json["id"] + imagetype);
